@@ -2,7 +2,8 @@
   (:require
     [quo.foundations.colors :as colors]))
 
-(defn color-button-common [window-width]
+(defn color-button-common
+  [window-width]
   {:width             (if window-width
                         (/ window-width 7.8125)
                         48)
@@ -26,27 +27,27 @@
              :border-bottom-color (colors/alpha color 0.2)
              :border-start-color  (colors/alpha color 0.2)}
             (when (zero? idx)
-              {:margin-left -4
+              {:margin-left  -4
                :margin-right (/ window-width 93.75)})))))
 
 (defn color-circle
   ([color border?]
    (color-circle color border? nil))
   ([color border? window-width]
-  {:width            (if window-width
-                       (/ window-width 9.375)
-                       40)
-   :height           (if window-width
-                       (/ window-width 9.375)
-                       40)
-   :transform        [{:rotate "-45deg"}]
-   :background-color color
-   :justify-content  :center
-   :align-items      :center
-   :border-color     color
-   :border-width     (if border? 2 0)
-   :overflow         :hidden
-   :border-radius    20}))
+   {:width            (if window-width
+                        (/ window-width 9.375)
+                        40)
+    :height           (if window-width
+                        (/ window-width 9.375)
+                        40)
+    :transform        [{:rotate "-45deg"}]
+    :background-color color
+    :justify-content  :center
+    :align-items      :center
+    :border-color     color
+    :border-width     (if border? 2 0)
+    :overflow         :hidden
+    :border-radius    100}))
 
 (defn feng-shui
   [theme]
