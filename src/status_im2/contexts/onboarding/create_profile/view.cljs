@@ -131,7 +131,8 @@
           {:keys [keyboard-shown keyboard-height]} (hooks/use-keyboard)
           show-background?                         (show-button-background keyboard-height
                                                                            keyboard-shown
-                                                                           @content-scroll-y)]
+                                                                           @content-scroll-y)
+          {window-width :width}                    (rn/get-window)]
       [rn/view {:style style/page-container}
        [quo/page-nav
         {:margin-top navigation-bar-top
@@ -170,9 +171,12 @@
                                      (rf/dispatch
                                       [:show-bottom-sheet
                                        {:content (fn []
-                                                   [method-menu/view on-change-profile-pic])
-                                        :shell?  true}]))
-              :image-picker-props  {:profile-picture     @profile-pic
+                                                   [method-menu/view on-change-profile-pic])}]))
+              :image-picker-props  {:profile-picture     (or
+                                                          @profile-pic
+                                                          (rf/sub
+                                                           [:profile/onboarding-placeholder-avatar
+                                                            @profile-pic]))
                                     :full-name           (if (seq @full-name)
                                                            @full-name
                                                            (i18n/label :t/your-name))
@@ -198,7 +202,9 @@
          [quo/color-picker
           {:blur?            true
            :default-selected :blue
-           :on-change        on-change}]]]
+           :on-change        on-change
+           :window-width     window-width
+           :container-style  {:padding-left (int (/ window-width 18.75))}}]]]
 
        [rn/keyboard-avoiding-view
         {:style          {:position :absolute
