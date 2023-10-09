@@ -360,7 +360,7 @@
 (def tag quo.components.tags.tag/tag)
 (def tags quo.components.tags.tags/tags)
 (def tiny-tag quo.components.tags.tiny-tag.view/view)
-(def token-tag quo.components.tags.token-tag/tag)
+(def token-tag quo.components.tags.token-tag/token-tag)
 
 ;;;; Text combinations
 (def text-combinations quo.components.text-combinations.view/view)

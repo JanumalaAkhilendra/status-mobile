@@ -34,7 +34,7 @@
    opts
    {
     :size :small/:big
-    :token-img-src :token-img-src
+    :img-src :img-src
     :token-img-style {}
     :border-color :color
     :overlay child-elements
@@ -51,13 +51,13 @@
      [rn/view
       {:style (merge (tag-container size) (get themes (theme/get-theme)))}
       [rn/image
-       {:src   img-src
-        :style (merge
-                {:height       (get-value-from-size size 28 20)
-                 :width        (get-value-from-size size 28 20)
-                 :margin-left  2
-                 :margin-right (get-value-from-size size 8 6)}
-                img-style)}]
+       {:source img-src
+        :style  (merge
+                 {:height       (get-value-from-size size 28 20)
+                  :width        (get-value-from-size size 28 20)
+                  :margin-left  2
+                  :margin-right (get-value-from-size size 8 6)}
+                 img-style)}]
       [text/text
        {:weight :medium
         :number-of-lines 1
@@ -99,7 +99,7 @@
     :symbol string
     :value string
     :size :small/:big
-    :token-img-src :token-img-src
+    :img-src :img-src
     :border-color :color
     :sufficient? true/false
     :purchasable? true/false
