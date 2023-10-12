@@ -192,6 +192,7 @@
 
 ;; Wallet 2
 (reg-root-key-sub :wallet-2/scanned-address :wallet-2/scanned-address)
+(reg-root-key-sub :wallet-2/create-account :wallet-2/create-account)
 
 ;;; Link previews
 
