@@ -358,3 +358,8 @@
 
 (def ^:const ens-action-type-register 1)
 (def ^:const ens-action-type-set-pub-key 2)
+
+;; wallet
+(def ^:const mainnet-chain-id 1)
+(def ^:const optimism-chain-id 10)
+(def ^:const arbitrum-chain-id 42161)
