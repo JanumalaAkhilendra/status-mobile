@@ -43,7 +43,9 @@
    [quo/text {:style {:margin-right 4}} "Hold"]
    [quo/token-tag
     {:size    :small
-     :img-src (quo.resources/get-token :eth)} "ETH"]
+     :img-src (quo.resources/get-token :eth)
+     :value   5
+     :symbol  "ETH"}]
    [quo/text {:style {:margin-left 4}} "To post"]])
 
 (defn example-3

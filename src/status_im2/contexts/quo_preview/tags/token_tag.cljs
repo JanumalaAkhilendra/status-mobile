@@ -29,7 +29,7 @@
     :type :boolean}
    {:key  :purchasable?
     :type :boolean}
-   {:key     :token
+   {:key     :symbol
     :type    :select
     :options [{:key   "ETH"
                :value "ETH"}
@@ -43,7 +43,7 @@
   []
   (let [state (reagent/atom {:size         :big
                              :value        10
-                             :token        "ETH"
+                             :symbol       "ETH"
                              :sufficient?  false
                              :purchasable? false})]
     (fn []
@@ -54,4 +54,4 @@
         [quo/token-tag
          (assoc @state
                 :img-src
-                (if (= (get-in @state [:token]) "ETH") eth-token snt-token))]]])))
+                (if (= (get-in @state [:symbol]) "ETH") eth-token snt-token))]]])))
