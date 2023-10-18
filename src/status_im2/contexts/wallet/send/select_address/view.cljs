@@ -6,7 +6,9 @@
     [react-native.safe-area :as safe-area]
     [reagent.core :as reagent]
     [status-im2.constants :as constants]
+    [status-im2.contexts.wallet.item-types :as types]
     [status-im2.contexts.wallet.send.select-address.style :as style]
+    [utils.debounce :as debounce]
     [utils.i18n :as i18n]
     [utils.re-frame :as rf]))
 
@@ -41,84 +43,107 @@
                        :container-style style/empty-container-style}]))
 
 (defn- address-input
-  [input-value input-focused? valid-ens-or-address?]
-  (let [timer                    (atom nil)
-        on-detect-address-or-ens (fn [_]
-                                   (reset! valid-ens-or-address? false)
-                                   (when @timer (js/clearTimeout @timer))
-                                   (reset! timer (js/setTimeout #(reset! valid-ens-or-address? true)
-                                                                2000)))]
-    (fn []
-      (let [scanned-address (rf/sub [:wallet/scanned-address])]
-        [quo/address-input
-         {:on-focus              #(reset! input-focused? true)
-          :on-blur               #(reset! input-focused? false)
-          :on-scan               #(rf/dispatch [:open-modal :scan-address])
-          :ens-regex             constants/regx-ens
-          :address-regex         constants/regx-address
-          :scanned-value         scanned-address
-          :on-detect-ens         on-detect-address-or-ens
-          :on-detect-address     on-detect-address-or-ens
-          :on-change-text        (fn [text]
-                                   (when-not (= scanned-address text)
-                                     (rf/dispatch [:wallet/clean-scanned-address]))
-                                   (rf/dispatch [:wallet/clean-local-suggestions])
-                                   (reset! input-value text))
-          :valid-ens-or-address? @valid-ens-or-address?}]))))
+  [input-value input-focused?]
+  (fn []
+    (let [scanned-address       (rf/sub [:wallet/scanned-address])
+          valid-ens-or-address? (boolean (rf/sub [:wallet/valid-ens-or-address?]))]
+      [quo/address-input
+       {:on-focus              #(reset! input-focused? true)
+        :on-blur               #(reset! input-focused? false)
+        :on-scan               #(rf/dispatch [:open-modal :scan-address])
+        :ens-regex             constants/regx-ens
+        :address-regex         constants/regx-address
+        :scanned-value         scanned-address
+        :on-detect-ens         #(debounce/debounce-and-dispatch [:wallet/search-ens-local-suggestions
+                                                                 %]
+                                                                300)
+        :on-detect-address     #(debounce/debounce-and-dispatch
+                                 [:wallet/search-address-local-suggestions %]
+                                 300)
+        :on-change-text        (fn [text]
+                                 (when-not (= scanned-address text)
+                                   (rf/dispatch [:wallet/clean-scanned-address]))
+                                 (rf/dispatch [:wallet/clean-local-suggestions])
+                                 (reset! input-value text))
+        :valid-ens-or-address? valid-ens-or-address?}])))
+
+(defn suggestion-component
+  []
+  (fn [{:keys [type] :as local-suggestion} _ _ _]
+    (let [props {:on-press #(js/alert "Not implemented yet")}]
+      (cond
+        (= type types/saved-address)
+        [quo/saved-address props]
+
+        :else
+        nil))))
+
+(defn- clean-local-suggestions
+  []
+  (fn []
+    (let [local-suggestion (rf/sub [:wallet/local-suggestions])]
+      [rn/view {:style {:flex 1}}
+       [rn/flat-list
+        {:data                      local-suggestion
+         :content-container-style   {:flex-grow 1}
+         :key-fn                    :id
+         :on-scroll-to-index-failed identity
+         :render-fn                 suggestion-component}]])))
 
 (defn- f-view-internal
   []
-  (let [margin-top            (safe-area/get-top)
-        selected-tab          (reagent/atom (:id (first tabs-data)))
-        on-close              #(rf/dispatch [:navigate-back])
-        on-change-tab         #(reset! selected-tab %)
-        input-value           (reagent/atom "")
-        input-focused?        (reagent/atom false)
-        valid-ens-or-address? (reagent/atom false)]
+  (let [margin-top     (safe-area/get-top)
+        selected-tab   (reagent/atom (:id (first tabs-data)))
+        on-close       #(rf/dispatch [:navigate-back])
+        on-change-tab  #(reset! selected-tab %)
+        input-value    (reagent/atom "")
+        input-focused? (reagent/atom false)]
     (fn []
-      (rn/use-effect (fn [] #(rf/dispatch [:wallet/clean-scanned-address])))
-      [rn/scroll-view
-       {:content-container-style      (style/container margin-top)
-        :keyboard-should-persist-taps :never
-        :scroll-enabled               false}
-       [quo/page-nav
-        {:icon-name           :i/close
-         :on-press            on-close
-         :accessibility-label :top-bar
-         :right-side          :account-switcher
-         :account-switcher    {:customization-color :purple
-                               :on-press            #(js/alert "Not implemented yet")
-                               :state               :default
-                               :emoji               "🍑"}}]
-       [quo/text-combinations
-        {:title                     (i18n/label :t/send-to)
-         :container-style           style/title-container
-         :title-accessibility-label :title-label}]
-       [address-input input-value input-focused? valid-ens-or-address?]
-       [quo/divider-line]
-       (if (or @input-focused? (> (count @input-value) 0))
-         [rn/keyboard-avoiding-view
-          {:style                    {:flex 1}
-           :keyboard-vertical-offset 26}
-          [rn/view {:style {:flex 1}}]
-          (when (> (count @input-value) 0)
-            [quo/button
-             {:accessibility-label :continue-button
-              :type                :primary
-              :disabled?           (not @valid-ens-or-address?)
-              :container-style     style/button}
-             (i18n/label :t/continue)])]
-         [:<>
-          [quo/tabs
-           {:style            style/tabs
-            :container-style  style/tabs-content
-            :size             32
-            :default-active   @selected-tab
-            :data             tabs-data
-            :scrollable?      true
-            :scroll-on-press? true
-            :on-change        on-change-tab}]
-          [tab-view @selected-tab]])])))
+      (let [valid-ens-or-address? (boolean (rf/sub [:wallet/valid-ens-or-address?]))]
+        (rn/use-effect (fn [] #(rf/dispatch [:wallet/clean-scanned-address])))
+        [rn/scroll-view
+         {:content-container-style      (style/container margin-top)
+          :keyboard-should-persist-taps :never
+          :scroll-enabled               false}
+         [quo/page-nav
+          {:icon-name           :i/close
+           :on-press            on-close
+           :accessibility-label :top-bar
+           :right-side          :account-switcher
+           :account-switcher    {:customization-color :purple
+                                 :on-press            #(js/alert "Not implemented yet")
+                                 :state               :default
+                                 :emoji               "🍑"}}]
+         [quo/text-combinations
+          {:title                     (i18n/label :t/send-to)
+           :container-style           style/title-container
+           :title-accessibility-label :title-label}]
+         [address-input input-value input-focused?]
+         [quo/divider-line]
+         (if (or @input-focused? (> (count @input-value) 0))
+           [rn/keyboard-avoiding-view
+            {:style                    {:flex 1}
+             :keyboard-vertical-offset 26}
+            [rn/view {:style {:flex 1}}
+             [clean-local-suggestions]]
+            (when (> (count @input-value) 0)
+              [quo/button
+               {:accessibility-label :continue-button
+                :type                :primary
+                :disabled?           (not valid-ens-or-address?)
+                :container-style     style/button}
+               (i18n/label :t/continue)])]
+           [:<>
+            [quo/tabs
+             {:style            style/tabs
+              :container-style  style/tabs-content
+              :size             32
+              :default-active   @selected-tab
+              :data             tabs-data
+              :scrollable?      true
+              :scroll-on-press? true
+              :on-change        on-change-tab}]
+            [tab-view @selected-tab]])]))))
 
 (defn view-internal
   []
