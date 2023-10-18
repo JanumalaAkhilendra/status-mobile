@@ -73,12 +73,13 @@
     (let [props {:on-press #(js/alert "Not implemented yet")}]
       (cond
         (= type types/saved-address)
-        [quo/saved-address props]
-
+        [quo/saved-address
+         (merge props
+                {:user-props local-suggestion})]
         :else
         nil))))
 
-(defn- clean-local-suggestions
+(defn- local-suggestions-list
   []
   (fn []
     (let [local-suggestion (rf/sub [:wallet/local-suggestions])]
@@ -100,7 +101,10 @@
         input-focused? (reagent/atom false)]
     (fn []
       (let [valid-ens-or-address? (boolean (rf/sub [:wallet/valid-ens-or-address?]))]
-        (rn/use-effect (fn [] #(rf/dispatch [:wallet/clean-scanned-address])))
+        (rn/use-effect (fn []
+                         (fn []
+                           (rf/dispatch [:wallet/clean-scanned-address])
+                           (rf/dispatch [:wallet/clean-local-suggestions]))))
         [rn/scroll-view
          {:content-container-style      (style/container margin-top)
           :keyboard-should-persist-taps :never
@@ -124,8 +128,10 @@
            [rn/keyboard-avoiding-view
             {:style                    {:flex 1}
              :keyboard-vertical-offset 26}
-            [rn/view {:style {:flex 1}}
-             [clean-local-suggestions]]
+            [rn/view
+             {:style {:flex    1
+                      :padding 8}}
+             [local-suggestions-list]]
             (when (> (count @input-value) 0)
               [quo/button
                {:accessibility-label :continue-button

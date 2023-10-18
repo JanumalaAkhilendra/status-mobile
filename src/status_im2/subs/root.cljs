@@ -129,9 +129,6 @@
 
 (reg-root-key-sub :messages-home/selected-tab :messages-home/selected-tab)
 
-<<<<<<< HEAD
-;;communities
-=======
 ;;browser
 (reg-root-key-sub :browsers :browser/browsers)
 (reg-root-key-sub :browser/options :browser/options)
@@ -191,12 +188,10 @@
 (reg-root-key-sub :wallet/swap-from-token-amount :wallet/swap-from-token-amount)
 (reg-root-key-sub :wallet/swap-to-token-amount :wallet/swap-to-token-amount)
 (reg-root-key-sub :wallet/swap-advanced-mode? :wallet/swap-advanced-mode?)
-
-;; Wallet 2
-(reg-root-key-sub :wallet-2/scanned-address :wallet-2/scanned-address)
-(reg-root-key-sub :wallet-2/searching-local-suggestions? :wallet-2/searching-local-suggestions?)
-(reg-root-key-sub :wallet-2/local-suggestions :wallet-2/local-suggestions)
-(reg-root-key-sub :wallet-2/valid-ens-or-address? :wallet-2/valid-ens-or-address?)
+(reg-root-key-sub :wallet/scanned-address :wallet/scanned-address)
+(reg-root-key-sub :wallet/searching-local-suggestions? :wallet/searching-local-suggestions?)
+(reg-root-key-sub :wallet/local-suggestions :wallet/local-suggestions)
+(reg-root-key-sub :wallet/valid-ens-or-address? :wallet/valid-ens-or-address?)
 
 ;;; Link previews
 
@@ -245,7 +240,6 @@
 (reg-root-key-sub :buy-crypto/on-ramps :buy-crypto/on-ramps)
 
 ;; communities
->>>>>>> 239dfdfeb (progress on ens and address mocked suggestions)
 (reg-root-key-sub :communities :communities)
 (reg-root-key-sub :communities/create :communities/create)
 (reg-root-key-sub :communities/create-channel :communities/create-channel)
