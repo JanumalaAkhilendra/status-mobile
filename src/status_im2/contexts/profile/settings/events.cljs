@@ -1,10 +1,10 @@
 (ns status-im2.contexts.profile.settings.events
   (:require [clojure.string :as string]
-            [taoensso.timbre :as log]
-            [utils.re-frame :as rf]
             [status-im.bottom-sheet.events :as bottom-sheet.events]
             [status-im2.constants :as constants]
-            status-im2.contexts.profile.settings.effects))
+            status-im2.contexts.profile.settings.effects
+            [taoensso.timbre :as log]
+            [utils.re-frame :as rf]))
 
 (rf/defn send-contact-update
   [{:keys [db]}]

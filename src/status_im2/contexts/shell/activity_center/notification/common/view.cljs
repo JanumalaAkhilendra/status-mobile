@@ -4,8 +4,8 @@
     [quo.foundations.colors :as colors]
     [react-native.core :as rn]
     [react-native.gesture :as gesture]
-    [status-im2.contexts.shell.activity-center.notification.common.style :as style]
     [status-im2.contexts.profile.utils :as profile.utils]
+    [status-im2.contexts.shell.activity-center.notification.common.style :as style]
     [utils.i18n :as i18n]
     [utils.re-frame :as rf]))
 

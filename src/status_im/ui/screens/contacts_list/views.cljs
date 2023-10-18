@@ -1,13 +1,13 @@
 (ns status-im.ui.screens.contacts-list.views
   (:require
     [re-frame.core :as re-frame]
-    [status-im2.contexts.profile.utils :as profile.utils]
     [status-im.ui.components.chat-icon.screen :as chat-icon.screen]
     [status-im.ui.components.colors :as colors]
     [status-im.ui.components.invite.views :as invite]
     [status-im.ui.components.list.item :as list.item]
     [status-im.ui.components.list.views :as list.views]
     [status-im.ui.components.react :as react]
+    [status-im2.contexts.profile.utils :as profile.utils]
     [utils.i18n :as i18n])
   (:require-macros [status-im.utils.views :refer [defview letsubs]]))
 

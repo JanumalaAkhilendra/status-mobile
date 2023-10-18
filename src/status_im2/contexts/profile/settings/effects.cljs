@@ -1,6 +1,6 @@
 (ns status-im2.contexts.profile.settings.effects
   (:require [native-module.core :as native-module]
-            [quo2.foundations.colors :as colors]
+            [quo.foundations.colors :as colors]
             [re-frame.core :as re-frame]
             [react-native.platform :as platform]
             [status-im2.common.theme.core :as theme]

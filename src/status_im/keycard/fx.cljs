@@ -2,7 +2,6 @@
   (:require
     ["@react-native-async-storage/async-storage" :default AsyncStorage]
     ["react-native" :refer (BackHandler)]
-    [native-module.core :as native-module]
     [re-frame.core :as re-frame]
     [status-im.keycard.card :as card]
     [status-im.utils.deprecated-types :as types]

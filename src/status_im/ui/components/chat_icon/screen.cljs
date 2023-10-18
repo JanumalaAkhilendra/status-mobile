@@ -7,12 +7,12 @@
     [re-frame.core :as re-frame.core]
     [react-native.core :as rn]
     [status-im.ethereum.ens :as ens]
-    [status-im2.contexts.profile.utils :as profile.utils]
     [status-im.ui.components.chat-icon.styles :as styles]
     [status-im.ui.components.colors :as colors]
     [status-im.ui.components.icons.icons :as icons]
     [status-im.ui.screens.chat.photos :as photos]
-    [status-im.ui.screens.profile.visibility-status.utils :as visibility-status-utils]))
+    [status-im.ui.screens.profile.visibility-status.utils :as visibility-status-utils]
+    [status-im2.contexts.profile.utils :as profile.utils]))
 
 ;;TODO REWORK THIS NAMESPACE
 

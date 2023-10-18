@@ -17,7 +17,6 @@
     [status-im.ui.screens.profile.user.edit-picture :as edit]
     [status-im.ui.screens.profile.user.styles :as styles]
     [status-im.ui.screens.profile.visibility-status.views :as visibility-status]
-    [status-im.utils.gfycat.core :as gfy]
     [status-im.utils.universal-links.utils :as universal-links]
     [status-im.utils.utils :as utils]
     [status-im2.common.qr-codes.view :as qr-codes]

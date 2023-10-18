@@ -4,8 +4,8 @@
     [react-native.core :as rn]
     [reagent.core :as reagent]
     [status-im2.common.resources :as resources]
-    [status-im2.contexts.quo-preview.preview :as preview]
     [status-im2.contexts.profile.utils :as profile.utils]
+    [status-im2.contexts.quo-preview.preview :as preview]
     [utils.re-frame :as rf]))
 
 (def descriptor
