@@ -165,20 +165,13 @@
 (defn link-previews
   [{:keys [sending-links?]}
    {:keys [text-value maximized?]}
-   {:keys [height saved-height last-height]}
+   {:keys [height saved-height]}
    {:keys [link-previews?]}]
   (rn/use-effect
    (fn []
      (if-not @maximized?
-       (let [value (if link-previews?
-                     constants/links-container-height
-                     (- constants/links-container-height))]
-         (when (not= @sending-links? link-previews?)
-           (reanimated/animate height (+ (reanimated/get-shared-value saved-height) value))
-           (reanimated/set-shared-value saved-height
-                                        (+ (reanimated/get-shared-value saved-height) value))
-           (reanimated/set-shared-value last-height
-                                        (+ (reanimated/get-shared-value last-height) value))))
+       (when (not= @sending-links? link-previews?)
+         (reanimated/animate height (reanimated/get-shared-value saved-height)))
        (let [curr-text @text-value]
          (reset! text-value (str @text-value " "))
          (js/setTimeout #(reset! text-value curr-text) 10)))
@@ -188,7 +181,7 @@
 (defn use-images
   [{:keys [sending-images? input-ref]}
    {:keys [text-value maximized?]}
-   {:keys [container-opacity height saved-height last-height]}
+   {:keys [container-opacity height saved-height]}
    {:keys [images]}]
   (rn/use-effect
    (fn []
@@ -197,15 +190,8 @@
      (when (and (not @sending-images?) (seq images) @input-ref)
        (.focus ^js @input-ref))
      (if-not @maximized?
-       (let [value (if (seq images)
-                     constants/images-container-height
-                     (- constants/images-container-height))]
-         (when (not= @sending-images? (boolean (seq images)))
-           (reanimated/animate height (+ (reanimated/get-shared-value saved-height) value))
-           (reanimated/set-shared-value saved-height
-                                        (+ (reanimated/get-shared-value saved-height) value))
-           (reanimated/set-shared-value last-height
-                                        (+ (reanimated/get-shared-value last-height) value))))
+       (when (not= @sending-images? (boolean (seq images)))
+         (reanimated/animate height (reanimated/get-shared-value saved-height)))
        (let [curr-text @text-value]
          (reset! text-value (str @text-value " "))
          (js/setTimeout #(reset! text-value curr-text) 10)))
