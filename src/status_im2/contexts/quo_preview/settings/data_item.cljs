@@ -1,6 +1,6 @@
 (ns status-im2.contexts.quo-preview.settings.data-item
   (:require
-    [quo2.core :as quo]
+    [quo.core :as quo]
     [reagent.core :as reagent]
     [status-im2.common.resources :as resources]
     [status-im2.contexts.quo-preview.preview :as preview]))
@@ -47,6 +47,7 @@
                              :title               "Label"
                              :subtitle            "Description"
                              :icon                :i/placeholder
+                             :right-icon          :i/chevron-right
                              :emoji               "🎮"
                              :customization-color :yellow
                              :communities-list    communities-list})]
