@@ -7,7 +7,7 @@
     [re-frame.core :as re-frame.core]
     [react-native.core :as rn]
     [status-im.ethereum.ens :as ens]
-    [status-im.multiaccounts.core :as multiaccounts]
+    [status-im2.contexts.profile.utils :as profile.utils]
     [status-im.ui.components.chat-icon.styles :as styles]
     [status-im.ui.components.colors :as colors]
     [status-im.ui.components.icons.icons :as icons]
@@ -161,14 +161,14 @@
 (defn contact-icon-view
   [contact {:keys [container] :as styles}]
   [rn/view container
-   [photos/photo (multiaccounts/displayed-photo contact) styles]])
+   [photos/photo (profile.utils/photo contact) styles]])
 
 (defn contact-icon-contacts-tab
-  [{:keys [primary-name] :as contact}]
+  [profile]
   [rn/view styles/container-chat-list
    [quo/user-avatar
-    {:full-name         primary-name
-     :profile-picture   (multiaccounts/displayed-photo contact)
+    {:full-name         (profile.utils/displayed-name profile)
+     :profile-picture   (profile.utils/photo profile)
      :size              :small
      :status-indicator? false}]])
 

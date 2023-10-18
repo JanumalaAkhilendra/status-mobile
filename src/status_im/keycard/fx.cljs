@@ -201,15 +201,6 @@
    (.remove listener)))
 
 (re-frame/reg-fx
- :keycard/generate-name
- (fn [{:keys [public-key on-success]}]
-   (native-module/gfycat-identicon-async
-    public-key
-    (fn [whisper-name photo-path]
-      (re-frame/dispatch
-       [on-success whisper-name photo-path])))))
-
-(re-frame/reg-fx
  :keycard/save-multiaccount-and-login
  card/save-multiaccount-and-login)
 
