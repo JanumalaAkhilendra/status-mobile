@@ -20,7 +20,8 @@
     - :token-symbol - string"
   []
   (let [container-width (reagent/atom 0)]
-    (fn [{:keys [options size blur? theme token-img-src token-value token-symbol]}]
+    (fn [{:keys [options size blur? theme token-img-src token-value token-symbol]
+          :or   {size :size-24}}]
       [rn/view
        {:on-layout #(reset! container-width
                       (oget % "nativeEvent" "layout" "width"))}
