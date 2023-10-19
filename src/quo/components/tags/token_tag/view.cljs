@@ -26,8 +26,7 @@
        {:on-layout #(reset! container-width
                       (oget % :nativeEvent :layout :width))}
        [hole-view/hole-view
-        {:style (style/container size options blur? theme)
-         :holes (when options
+        {:holes (if options
                   [{:x            (- @container-width
                                      (condp = size
                                        :size-24 10
@@ -37,15 +36,18 @@
                                     :size-32 -4)
                     :width        16
                     :height       16
-                    :borderRadius 8}])}
-        [rn/image
-         {:style  (style/token-img size)
-          :source token-img-src}]
-        [text/text
-         {:size   :paragraph-2
-          :weight :medium
-          :style  (style/label theme)}
-         (str token-value " " token-symbol)]]
+                    :borderRadius 8}]
+                  [])}
+        [rn/view
+         {:style (style/container size options blur? theme)}
+         [rn/image
+          {:style  (style/token-img size)
+           :source token-img-src}]
+         [text/text
+          {:size   :paragraph-2
+           :weight :medium
+           :style  (style/label theme)}
+          (str token-value " " token-symbol)]]]
        (when options
          [rn/view {:style (style/options-icon size)}
           [icons/icon (if (= options :hold) :i/hold :i/add-token)
