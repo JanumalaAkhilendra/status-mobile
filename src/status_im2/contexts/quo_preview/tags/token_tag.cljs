@@ -53,7 +53,6 @@
                              :options      false
                              :blur?        false})]
     (fn []
-      (print @state)
       [preview/preview-container
        {:state                 state
         :blur?                 (:blur? @state)
