@@ -4,8 +4,8 @@
     [quo.components.markdown.text :as text]
     [quo.foundations.colors :as colors]
     [quo.theme :as theme]
-    [react-native.hole-view :as hole-view]
-    [react-native.core :as rn]))
+    [react-native.core :as rn]
+    [react-native.hole-view :as hole-view]))
 
 (def themes
   {:light {:background-color colors/neutral-20}
@@ -16,7 +16,7 @@
   (if (= size :big) big-option small-option))
 
 (def icon-container-styles
-  {:position        :absolute})
+  {:position :absolute})
 
 (defn tag-container
   [size]
@@ -79,19 +79,18 @@
   [rn/view
    {:style (merge
             icon-container-styles
-            {
-            ;;  :background-color border-color
-            ;;  :border-color     (if (= (theme/get-theme) :dark) colors/neutral-100 colors/white)
-            ;;  :border-width     1
-            ;;  :right            (get-value-from-size size -3.75 -5.75)
-            ;;  :bottom           (get-value-from-size size (- 32 7.75 4) (- 24 7.75 2))
+            {;;  :background-color border-color
+             ;;  :border-color     (if (= (theme/get-theme) :dark) colors/neutral-100 colors/white)
+             ;;  :border-width     1
+             ;;  :right            (get-value-from-size size -3.75 -5.75)
+             ;;  :bottom           (get-value-from-size size (- 32 7.75 4) (- 24 7.75 2))
              :right -5
-             :top -5
-             })}
+             :top   -5
+            })}
    [icons/icon (if sufficient? :i/hold :i/add-token)
     {:no-color true
      :size     20}]
-   ])
+  ])
 
 (defn token-tag
   "[token-tag opts]
@@ -125,5 +124,5 @@
             (when (or purchasable? sufficient?)
               [icon size border-color sufficient?]))}
          (str value " " sym)]
-        ]
+       ]
        [icon size border-color sufficient?]])))
