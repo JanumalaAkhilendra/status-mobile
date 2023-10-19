@@ -7,7 +7,8 @@
   (if size
     {:width  size
      :height size}
-    {:flex 1}))
+    {:flex 1}
+    ))
 
 (def avatar-overlay
   {:position        :absolute
