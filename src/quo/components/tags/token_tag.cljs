@@ -4,6 +4,7 @@
     [quo.components.markdown.text :as text]
     [quo.foundations.colors :as colors]
     [quo.theme :as theme]
+    [react-native.hole-view :as hole-view]
     [react-native.core :as rn]))
 
 (def themes
@@ -15,12 +16,7 @@
   (if (= size :big) big-option small-option))
 
 (def icon-container-styles
-  {:display         :flex
-   :align-items     :center
-   :justify-content :center
-   :position        :absolute
-   :border-radius   20
-   :margin-left     2})
+  {:position        :absolute})
 
 (defn tag-container
   [size]
@@ -83,14 +79,19 @@
   [rn/view
    {:style (merge
             icon-container-styles
-            {:background-color border-color
-             :border-color     (if (= (theme/get-theme) :dark) colors/neutral-100 colors/white)
-             :border-width     1
-             :right            (get-value-from-size size -3.75 -5.75)
-             :bottom           (get-value-from-size size (- 32 7.75 4) (- 24 7.75 2))})}
-   [icons/icon (if sufficient? :i/hold :i/add)
+            {
+            ;;  :background-color border-color
+            ;;  :border-color     (if (= (theme/get-theme) :dark) colors/neutral-100 colors/white)
+            ;;  :border-width     1
+            ;;  :right            (get-value-from-size size -3.75 -5.75)
+            ;;  :bottom           (get-value-from-size size (- 32 7.75 4) (- 24 7.75 2))
+             :right -5
+             :top -5
+             })}
+   [icons/icon (if sufficient? :i/hold :i/add-token)
     {:no-color true
-     :size     12}]])
+     :size     20}]
+   ])
 
 (defn token-tag
   "[token-tag opts]
@@ -112,13 +113,17 @@
     (let [sym          (:symbol props)
           sufficient?  (when-not loading? sufficient?)
           border-color (if sufficient? colors/success-50 border-color)]
-      [tag
-       {:size size
-        :img-src img-src
-        :border-color (if sufficient? colors/success-50 border-color)
-        :overlay
-        (if loading?
-          [loading-icon]
-          (when (or purchasable? sufficient?)
-            [icon size border-color sufficient?]))}
-       (str value " " sym)])))
+      [rn/view
+       [hole-view/hole-view {:holes [{:x 81 :y -3 :width 16 :height 16 :borderRadius 8}]}
+        [tag
+         {:size size
+          :img-src img-src
+          :border-color (if sufficient? colors/success-50 border-color)
+          :overlay
+          (if loading?
+            [loading-icon]
+            (when (or purchasable? sufficient?)
+              [icon size border-color sufficient?]))}
+         (str value " " sym)]
+        ]
+       [icon size border-color sufficient?]])))
