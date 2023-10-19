@@ -19,7 +19,7 @@
 
 (defn view
   []
-  (let [state (reagent/atom {:type       :wallet-legacy
+  (let [state (reagent/atom {:type       :wallet-multichain
                              :link-title "Link to profile"
                              :data
                              "status.app/u/zQ34Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse ut metus. Proin venenatis turpis sit amet ante consequat semper. Aenean nunc. Duis iaculis odio id lectus. Integer dapibus justo vitae elit."
@@ -48,8 +48,8 @@
                             :left     0
                             :right    0}}
            [rn/image
-            {:style {:flex 1}
-             :source (resources/get-mock-image :dark-blur-bg)}]]
+            {:style  {:flex 1}
+             :source (resources/get-mock-image :dark-blur-background)}]]
 
           [quo/share-qr-code
            {:qr-image-uri       qr-media-server-uri

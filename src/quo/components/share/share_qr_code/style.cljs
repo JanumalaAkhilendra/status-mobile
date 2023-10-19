@@ -19,3 +19,16 @@
 (def title {:color colors/white-opa-40})
 
 
+(def dashed-line-container
+  {:flex-direction :row
+   :margin-left    -1})
+
+(def line
+  {:background-color colors/white-opa-20
+   :width            2
+   :height           1})
+
+(def line-space
+  {:width  4
+   :height 1})
+

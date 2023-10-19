@@ -6,9 +6,12 @@
             [quo.components.share.share-qr-code.style :as style]
             [quo.components.tabs.tab.view :as tab]
             [quo.foundations.colors :as colors]
+            [quo.foundations.resources :as quo.resources]
             [react-native.blur :as blur]
             [react-native.core :as rn]
             [quo.components.tabs.tabs.view :as tabs]
+            [quo.components.list-items.preview-list.view :as preview-list
+             ]
             [oops.core :as oops]
             [reagent.core :as reagent]))
 
@@ -19,6 +22,12 @@
     (:wallet-legacy
      :wallet-multichain) "Wallet address"
     ""))
+
+(defn dashed-line [component-width]
+  (into [rn/view {:style style/dashed-line-container}]
+        (take (inc (int (* (/ (- component-width 20 20) 6) 2)))
+              (interleave (repeat [rn/view {:style style/line}])
+                          (repeat [rn/view {:style style/line-space}])))))
 
 (defn profile-variant-section [{:keys [share-qr-code-type component-width data]}]
   [:<>
@@ -58,8 +67,8 @@
   [rn/view
 
    (when (#{:wallet-legacy :wallet-multichain} share-qr-code-type)
-     [rn/view {:style {:flex-direction   :row
-                       :margin-bottom    12}}
+     [rn/view {:style {:flex-direction :row
+                       :margin-bottom  12}}
       [tab/view
        {:id                          :wallet-legacy
         :active-item-container-style {:background-color colors/white-opa-20}
@@ -75,7 +84,8 @@
 
       [tab/view
        {:id                          :wallet-multichain
-        :active-item-container-style {:background-color colors/white-opa-20}
+        :active-item-container-style {:background-color colors/white-opa-20
+                                      :margin-left      8}
         :item-container-style        {:background-color colors/white-opa-5
                                       :margin-left      8
                                       }
@@ -147,34 +157,39 @@
           :i/share]]]]
 
       :wallet-multichain
-      [rn/view {:style {:flex 1}}
-       [text/text
-        {:size   :paragraph-2
-         :weight :medium
-         :style  style/title}
-        (str (url-title share-qr-code-type) " -- " component-width)]
+      [rn/view {:style {:flex       1
+                        :margin-top 4}}
+       [rn/view {:style {:flex-direction  :row
+                         :justify-content :space-between
+                         :margin-bottom   8}}
+        [preview-list/view {:type :network
+                            :size :size-32}
+         [{:source (quo.resources/get-network :ethereum)}
+          {:source (quo.resources/get-network :optimism)}
+          {:source (quo.resources/get-network :arbitrum)}
+          #_{:source (quo.resources/get-network :zksync)}
+          #_{:source (quo.resources/get-network :polygon)}]]
 
-       [rn/view {:style {:flex-direction   :row
-                         :background-color :orange
-                         :justify-content  :space-between}}
-        [rn/view {:style {:width (- component-width 12 12 32 16)}}
-         [text/text
-          {:size            :paragraph-1
-           :weight          :medium
-           :ellipsize-mode  :middle
-           :number-of-lines 2}
-          data]]
-        ;;
-        [rn/view {:style {:justify-content :center}}
-         [button/button
-          {:icon-only?          true
-           :type                :grey
-           :background          :blur
-           :size                32
-           :accessibility-label :share-profile
-           ;:on-press            share-on-press
-           }
-          :i/share]]]]
+        [button/button
+         {:icon-only?          true
+          :type                :grey
+          :background          :blur
+          :size                32
+          :accessibility-label :share-profile
+          ;:on-press            share-on-press
+          }
+         :i/advanced]]
+       ;;
+
+       [rn/view {:style {:height            8
+                         :margin-horizontal 8
+                         :justify-content   :center
+                         :overflow          :hidden}}
+        [dashed-line component-width]]
+       ;;
+
+       ]
+
       nil)
     ]])
 
