@@ -9,11 +9,11 @@
 (def descriptor
   [{:key     :size
     :type    :select
-    :options [{:key   :big
-               :value "big"}
-              {:key   :small
-               :value "small"}]}
-   {:key     :value
+    :options [{:key   :size-24
+               :value "Size 24"}
+              {:key   :size-32
+               :value "Size 32"}]}
+   {:key     :token-value
     :type    :select
     :options [{:key   0
                :value "0"}
@@ -25,11 +25,17 @@
                :value "1000"}
               {:key   10000
                :value "10000"}]}
-   {:key  :sufficient?
+   {:key     :options
+    :type    :select
+    :options [{:key   false
+               :value false}
+              {:key   :add
+               :value :add}
+              {:key   :hold
+               :value :hold}]}
+   {:key  :blur?
     :type :boolean}
-   {:key  :purchasable?
-    :type :boolean}
-   {:key     :symbol
+   {:key     :token-symbol
     :type    :select
     :options [{:key   "ETH"
                :value "ETH"}
@@ -41,17 +47,20 @@
 
 (defn view
   []
-  (let [state (reagent/atom {:size         :big
-                             :value        10
-                             :symbol       "ETH"
-                             :sufficient?  false
-                             :purchasable? false})]
+  (let [state (reagent/atom {:size         :size-24
+                             :token-value  10
+                             :token-symbol "ETH"
+                             :options      false
+                             :blur?        false})]
     (fn []
+      (print @state)
       [preview/preview-container
-       {:state      state
-        :descriptor descriptor}
+       {:state                 state
+        :blur?                 (:blur? @state)
+        :show-blur-background? true
+        :descriptor            descriptor}
        [rn/view {:style {:align-items :center}}
         [quo/token-tag
          (assoc @state
-                :img-src
-                (if (= (get-in @state [:symbol]) "ETH") eth-token snt-token))]]])))
+                :token-img-src
+                (if (= (get-in @state [:token-symbol]) "ETH") eth-token snt-token))]]])))
