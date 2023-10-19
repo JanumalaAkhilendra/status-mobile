@@ -6,6 +6,7 @@
     [status-im.contact.db :as contact.db]
     [status-im.ui.screens.profile.visibility-status.utils :as visibility-status-utils]
     [status-im2.constants :as constants]
+    [status-im2.contexts.profile.utils :as profile.utils]
     [utils.address :as address]
     [utils.collection]
     [utils.i18n :as i18n]
@@ -233,18 +234,11 @@
    [(re-frame/subscribe [:contacts/contact-by-identity contact-identity])
     (re-frame/subscribe [:profile/profile])])
  (fn [[contact current-profile] [_ contact-identity]]
-   (let [me? (= (:public-key current-profile) contact-identity)]
-     (if me?
-       [(or (:display-name current-profile)
-            (:primary-name contact))]
-       [(:primary-name contact) (:secondary-name contact)]))))
-
-(re-frame/reg-sub
- :contacts/contact-name-by-identity
- (fn [[_ contact-identity] _]
-   [(re-frame/subscribe [:contacts/contact-two-names-by-identity contact-identity])])
- (fn [[names] _]
-   (first names)))
+   (let [contact' (if (= (:public-key current-profile) contact-identity)
+                    (assoc contact :display-name (:display-name current-profile))
+                    contact)]
+     [(profile.utils/displayed-name contact')
+      (:secondary-name contact)])))
 
 (re-frame/reg-sub
  :contacts/all-contacts-not-in-current-chat
