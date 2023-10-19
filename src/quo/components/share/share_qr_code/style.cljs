@@ -68,12 +68,16 @@
 
 (def wallet-multichain-data-container {:margin-top 4})
 
-
+;; Dashed line
 (def divider-container
   {:height            8
    :margin-horizontal 4
    :justify-content   :center
    :overflow          :hidden})
+
+(def ^:private padding-for-divider (+ padding-horizontal 4))
+(def ^:private dashed-line-width 2)
+(def ^:private dashed-line-space 4)
 
 (def dashed-line
   {:flex-direction :row
@@ -81,10 +85,17 @@
 
 (def line
   {:background-color colors/white-opa-20
-   :width            2
+   :width            dashed-line-width
    :height           1})
 
 (def line-space
-  {:width  4
+  {:width  dashed-line-space
    :height 1})
+
+(defn number-lines-and-spaces-to-fill [component-width]
+  (let [padding-for-divider  (+ padding-horizontal 4)
+        line-and-space-width (+ dashed-line-width dashed-line-space)
+        width-to-fill        (- component-width (* 2 padding-for-divider))
+        number-of-lines      (* (/ width-to-fill line-and-space-width) 2)]
+    (inc (int number-of-lines))))
 

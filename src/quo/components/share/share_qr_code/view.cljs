@@ -1,5 +1,6 @@
 (ns quo.components.share.share-qr-code.view
-  (:require [oops.core :as oops]
+  (:require [clojure.string :as string]
+            [oops.core :as oops]
             [quo.components.buttons.button.view :as button]
             [quo.components.icon :as icon]
             [quo.components.list-items.preview-list.view :as preview-list]
@@ -14,48 +15,19 @@
             [react-native.core :as rn]
             [reagent.core :as reagent]))
 
+(defn- line [] [rn/view {:style style/line}])
+(defn- space [] [rn/view {:style style/line-space}])
+
+(defn- dashed-line [width]
+  (into [rn/view {:style style/dashed-line}]
+        (take (style/number-lines-and-spaces-to-fill width))
+        (cycle [[line] [space]])))
+
 (defn url-title [share-qr-code-type]
   ;; TODO: get translated strings
-  (case share-qr-code-type
-    :profile "Link to profile"
-    (:wallet-legacy
-     :wallet-multichain) "Wallet address"
-    ""))
-
-(defn- dashed-line [component-width]
-  (into [rn/view {:style style/dashed-line}]
-        (take (inc (int (* (/ (- component-width 16 16) 6) 2)))
-              (interleave (repeat [rn/view {:style style/line}])
-                          (repeat [rn/view {:style style/line-space}])))))
-
-(defn profile-variant-section [{:keys [share-qr-code-type component-width data]}]
-  [:<>
-   [rn/view {:style {:background-color :green}}
-    [text/text
-     {:size   :paragraph-2
-      :weight :medium
-      :style  style/title}
-     (str (url-title share-qr-code-type) " -- " component-width)]
-
-    [rn/view {:style {:width (- component-width 12 12 32 16)}}
-     [text/text
-      {:size            :paragraph-1
-       :weight          :monospace
-       :ellipsize-mode  :middle
-       :number-of-lines 1}
-      data]]]
-
-   [rn/view {:style {:justify-content :center
-                     :margin-left     16}}
-    [button/button
-     {:icon-only?          true
-      :type                :grey
-      :background          :blur
-      :size                32
-      :accessibility-label :share-profile
-      ;:on-press            share-on-press
-      }
-     :i/share]]])
+  (if (= share-qr-code-type :profile)
+    "Link to profile"
+    "Wallet address"))
 
 ;; TODO: solve translations here
 ;; TODO: add callbacks dor those tabs
@@ -89,18 +61,17 @@
      "Link to profile"
      "Wallet address")])
 
-(defn- data-text
-  ([component-width qr-data]
-   (data-text component-width qr-data false))
-  ([component-width qr-data ellipsize?]
-   (let [text-styles (cond-> {:size            :paragraph-1
-                              :weight          :monospace
-                              :number-of-lines 2}
-                       ellipsize? (assoc :ellipsize-mode :middle
-                                         :number-of-lines 1))]
-     [rn/view {:style (style/data-text component-width)}
-      [text/text text-styles
-       qr-data]])))
+(defn- qr-text
+  ([component-width qr-data-text]
+   (qr-text component-width qr-data-text false))
+  ([component-width qr-data-text ellipsize?]
+   [rn/view {:style (style/data-text component-width)}
+    [text/text (cond-> {:size            :paragraph-1
+                        :weight          :monospace
+                        :number-of-lines 2}
+                 ellipsize? (assoc :ellipsize-mode  :middle
+                                   :number-of-lines 1))
+     qr-data-text]]))
 
 ;; TODO: add on-press callback
 (defn- share-button [{:keys [alignment]}]
@@ -112,6 +83,21 @@
      :size                style/share-button-size
      :accessibility-label :share-profile}
     :i/share]])
+
+(defn wallet-multichain-colored-address [address]
+  (reduce (fn [acc s]
+            (conj acc
+                  (if (string/starts-with? s "0x")
+                    s
+                    (let [network (case s ;; TODO: use a map
+                                    "eth" :ethereum
+                                    "opt" :optimism
+                                    "arb1" :arbitrum
+                                    :unknown)]
+                      [text/text {:style {:color (colors/resolve-color network nil)}}
+                       (str s ":")]))))
+          [:<>]
+          (clojure.string/split address #":")))
 
 (defn view*
   [{:keys              [qr-image-uri qr-data component-width] ;; TODO: maybe rename `component-width`
@@ -129,14 +115,14 @@
       [:<>
        [rn/view
         [title-text share-qr-code-type]
-        [data-text component-width qr-data :ellipsize]]
+        [qr-text component-width qr-data :ellipsize]]
        [share-button {:alignment :center}]]
 
       :wallet-legacy
       [rn/view {:style style/wallet-legacy-container}
        [title-text share-qr-code-type]
        [rn/view {:style style/wallet-data-and-share-container}
-        [data-text component-width qr-data]
+        [qr-text component-width qr-data]
         [share-button {:alignment :top}]]]
 
       :wallet-multichain
@@ -165,16 +151,9 @@
         [title-text share-qr-code-type]
 
         [rn/view {:style style/wallet-data-and-share-container}
-         [data-text component-width
-          [:<>
-           [text/text {:style {:color (colors/resolve-color :ethereum nil)}}
-            "eth:"]
-           [text/text {:style {:color (colors/resolve-color :optimism nil)}}
-            "opt:"]
-           [text/text {:style {:color (colors/resolve-color :arbitrum nil)}}
-            "arb1:"]
-           "0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2"
-           #_data]]
+         [qr-text component-width
+          [wallet-multichain-colored-address
+           "eth:opt:arb1:zkS:her:xda:pol:0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2"]]
          ;;
          [share-button {:alignment :top}]]]]
       nil)]])
