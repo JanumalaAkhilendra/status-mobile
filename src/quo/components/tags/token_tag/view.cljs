@@ -24,7 +24,7 @@
           :or   {size :size-24}}]
       [rn/view
        {:on-layout #(reset! container-width
-                      (oget % "nativeEvent" "layout" "width"))}
+                      (oget % :nativeEvent :layout :width))}
        [hole-view/hole-view
         {:style (style/container size options blur? theme)
          :holes (when options
