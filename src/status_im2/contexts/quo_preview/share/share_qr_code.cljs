@@ -66,20 +66,25 @@
     :arbitrum "arb1:"
     (str (name network-kw) ":")))
 
+(def ^:private profile-link
+  "https://join.status.im/u/zQ3shfozoVJF6oUBcgcaaaK3sipoZFPYXZ5FbHvMXGc5Wrqnu")
+
+(def ^:private wallet-address "0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2")
+
 (defn- reset-qr-data [share-qr-type atom]
   [:<>
    (rn/use-effect
     (fn []
       (swap! atom assoc :qr-data (if (= share-qr-type :profile)
-                                   "status.app/u/zQ34-this-is-a-link-to-a-Status-profile"
-                                   "0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2"))
+                                   profile-link
+                                   wallet-address))
       nil)
     [share-qr-type])])
 
 (defn view
   []
   (let [state (reagent/atom {:type                :profile
-                             :qr-data             "status.app/u/zQ34-this-is-a-link-to-a-Status-profile"
+                             :qr-data             profile-link
                              :on-share-press      #(js/alert "share pressed")
                              :on-text-press       #(js/alert "text pressed")
                              :on-text-long-press  #(js/alert "text long press")
@@ -113,15 +118,12 @@
         [preview/preview-container
          {:state                     state
           :descriptor                typed-descriptor
-          ;:full-component-layout?    true
           :component-container-style {:padding-horizontal 0}}
          [rn/view {:style {:flex               1
                            :justify-content    :center
                            :align-items        :center
                            :padding-horizontal 20
-                           :padding-vertical   40
-                           #_#_:padding-vertical 20
-                           #_#_:padding-horizontal 20}}
+                           :padding-vertical   40}}
           ;; Hack to reset the `:qr-data` atom value when the `:type` changes
           [:f> reset-qr-data (:type @state) state]
           [rn/view {:style {:position :absolute

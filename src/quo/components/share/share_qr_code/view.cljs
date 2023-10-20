@@ -58,15 +58,16 @@
 
 (defn- info-text
   [{:keys [width ellipsize? on-press on-long-press]} qr-data-text]
-  [rn/pressable {:style         (style/data-text width)
-                 :on-press      on-press
-                 :on-long-press on-long-press}
-   [text/text (cond-> {:size            :paragraph-1
-                       :weight          :monospace
-                       :number-of-lines 2}
-                ellipsize? (assoc :ellipsize-mode :middle
-                                  :number-of-lines 1))
-    qr-data-text]])
+  (let [text-component (if ellipsize? rn/text text/text)]
+    [rn/pressable {:style         (style/data-text width)
+                   :on-press      on-press
+                   :on-long-press on-long-press}
+     [text-component (cond-> {:size            :paragraph-1
+                              :weight          :monospace
+                              :number-of-lines 2}
+                       ellipsize? (assoc :ellipsize-mode :middle
+                                         :number-of-lines 1))
+      qr-data-text]]))
 
 (defn- share-button [{:keys [alignment on-press]}]
   [rn/view {:style (style/share-button-container alignment)}
