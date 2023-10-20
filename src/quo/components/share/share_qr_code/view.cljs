@@ -84,20 +84,18 @@
      :accessibility-label :share-profile}
     :i/share]])
 
-(defn wallet-multichain-colored-address [address]
-  (reduce (fn [acc s]
-            (conj acc
-                  (if (string/starts-with? s "0x")
-                    s
-                    (let [network (case s ;; TODO: use a map
-                                    "eth" :ethereum
-                                    "opt" :optimism
-                                    "arb1" :arbitrum
-                                    :unknown)]
-                      [text/text {:style {:color (colors/resolve-color network nil)}}
-                       (str s ":")]))))
-          [:<>]
-          (clojure.string/split address #":")))
+(defn- network-colored-text [network-short-name]
+  [text/text {:style (style/network-short-name-text network-short-name)}
+   (str network-short-name ":")])
+
+(defn- wallet-multichain-colored-address [full-address]
+  (let [[networks address] (as-> full-address $
+                             (string/split $ ":")
+                             [(butlast $) (last $)])
+        ->network-hiccup-xf (map #(vector network-colored-text %))]
+    (as-> networks $
+      (into [:<>] ->network-hiccup-xf $)
+      (conj $ address))))
 
 (defn view*
   [{:keys              [qr-image-uri qr-data component-width] ;; TODO: maybe rename `component-width`
@@ -153,7 +151,7 @@
         [rn/view {:style style/wallet-data-and-share-container}
          [qr-text component-width
           [wallet-multichain-colored-address
-           "eth:opt:arb1:zkS:her:xda:pol:0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2"]]
+           "eth:opt:arb1:0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2"]]
          ;;
          [share-button {:alignment :top}]]]]
       nil)]])

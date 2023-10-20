@@ -99,3 +99,12 @@
         number-of-lines      (* (/ width-to-fill line-and-space-width) 2)]
     (inc (int number-of-lines))))
 
+(def ^:private get-network-full-name
+  {"eth"  :ethereum
+   "opt"  :optimism
+   "arb1" :arbitrum})
+
+(defn network-short-name-text [network-short-name]
+  {:color (-> network-short-name
+              (get-network-full-name :unknown)
+              (colors/resolve-color nil))})

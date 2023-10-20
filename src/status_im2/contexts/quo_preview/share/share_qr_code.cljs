@@ -43,7 +43,7 @@
                            :justify-content    :center
                            :align-items        :center
                            :padding-vertical   20
-                           :padding-horizontal 10}}
+                           :padding-horizontal 5}}
           [rn/view {:style {:position :absolute
                             :top      0
                             :bottom   0
