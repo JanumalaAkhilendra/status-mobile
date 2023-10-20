@@ -23,12 +23,6 @@
         (take (style/number-lines-and-spaces-to-fill width))
         (cycle [[line] [space]])))
 
-(defn url-title [share-qr-code-type]
-  ;; TODO: get translated strings
-  (if (= share-qr-code-type :profile)
-    "Link to profile"
-    "Wallet address"))
-
 ;; TODO: solve translations here
 ;; TODO: add callbacks dor those tabs
 (defn- header [wallet-type]
