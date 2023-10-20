@@ -33,6 +33,9 @@
 (defn qr-code-size [total-width]
   (- total-width (* 2 padding-horizontal)))
 
+(defn qr-image-background-color [customization-color]
+  (colors/resolve-color customization-color :light))
+
 ;; Bottom part
 (def bottom-container
   {:margin-top      8

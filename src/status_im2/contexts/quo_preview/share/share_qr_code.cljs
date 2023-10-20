@@ -1,12 +1,11 @@
 (ns status-im2.contexts.quo-preview.share.share-qr-code
-  (:require
-   [quo.core :as quo]
-   [react-native.core :as rn]
-   [reagent.core :as reagent]
-   [status-im2.common.resources :as resources]
-   [status-im2.contexts.quo-preview.preview :as preview]
-   [utils.image-server :as image-server]
-   [utils.re-frame :as rf]))
+  (:require [quo.core :as quo]
+            [react-native.core :as rn]
+            [reagent.core :as reagent]
+            [status-im2.common.resources :as resources]
+            [status-im2.contexts.quo-preview.preview :as preview]
+            [utils.image-server :as image-server]
+            [utils.re-frame :as rf]))
 
 (def descriptor
   [{:key   :qr-data
@@ -16,34 +15,115 @@
     :type    :select
     :options [{:key :profile}
               {:key :wallet-legacy}
-              {:key :wallet-multichain}]}
-   {:key  :link-title
-    :type :text}])
+              {:key :wallet-multichain}]}])
+
+(def profile-descriptor
+  [{:key     :profile-picture
+    :type    :select
+    :options [{:key   (resources/get-mock-image :user-picture-female2)
+               :value "User 1"}
+              {:key   (resources/get-mock-image :user-picture-male4)
+               :value "User 2"}
+              {:key   nil
+               :value "No picture"}]}
+
+   {:key  :full-name
+    :type :text}
+   (preview/customization-color-option)])
+
+(def wallet-legacy-descriptor
+  [{:key     :emoji
+    :type    :select
+    :options [{:key "🐈"}
+              {:key "👻"}
+              {:key "🐧"}]}
+   (preview/customization-color-option)])
+
+(def possible-networks [:ethereum :optimism :arbitrum :my-network])
+
+(def wallet-multichain-descriptor
+  [{:key     :emoji
+    :type    :select
+    :options [{:key "🐈"}
+              {:key "👻"}
+              {:key "🐧"}]}
+   (preview/customization-color-option)
+   {:key     :networks
+    :type    :select
+    :options [{:key   (take 1 possible-networks)
+               :value "Ethereum"}
+              {:key   (take 2 possible-networks)
+               :value "Ethereum and Optimism"}
+              {:key   (take 3 possible-networks)
+               :value "Ethereum, Optimism and Arbitrum"}
+              {:key   (take 4 possible-networks)
+               :value "Ethereum, Optimism, Arbitrum and unknown"}]}])
+
+(defn- get-network-short-name-url [network-kw]
+  (case network-kw
+    :ethereum "eth:"
+    :optimism "opt:"
+    :arbitrum "arb1:"
+    (str (name network-kw) ":")))
+
+(defn- reset-qr-data [share-qr-type atom]
+  [:<>
+   (rn/use-effect
+    (fn []
+      (swap! atom assoc :qr-data (if (= share-qr-type :profile)
+                                   "status.app/u/zQ34-this-is-a-link-to-a-Status-profile"
+                                   "0x39cf6E0Ba4C4530735616e1Ee7ff5FbCB726fBd2"))
+      nil)
+    [share-qr-type])])
 
 (defn view
   []
-  (let [state (reagent/atom {:type  :wallet-multichain ;:wallet-legacy ;:profile
-                             :link-title "Link to profile"
-                             :qr-data
-                             "status.app/u/zQ34Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Suspendisse ut metus. Proin venenatis turpis sit amet ante consequat semper. Aenean nunc. Duis iaculis odio id lectus. Integer dapibus justo vitae elit."
-                             ;"status.app/u/zQ34easjbasas12adjie8"
-                             })]
+  (let [state (reagent/atom {:type                :profile
+                             :qr-data             "status.app/u/zQ34-this-is-a-link-to-a-Status-profile"
+                             :on-share-press      #(js/alert "share pressed")
+                             :on-text-press       #(js/alert "text pressed")
+                             :on-text-long-press  #(js/alert "text long press")
+                             :profile-picture     nil
+                             :full-name           "Abcd User"
+                             :customization-color :purple
+                             :emoji               "🐈"
+                             :on-info-press       #(js/alert "Info pressed")
+                             :on-legacy-press     #(js/alert (str "Tab " % " pressed"))
+                             :on-multichain-press #(js/alert (str "Tab " % " pressed"))
+                             :networks            (take 2 possible-networks)
+                             :on-settings-press   #(js/alert "Settings pressed")})]
     (fn []
-      (let [qr-media-server-uri (image-server/get-qr-image-uri-for-any-url
-                                 {:url         (:qr-data @state)
+      (let [qr-url              (if (= (:type @state) :wallet-multichain)
+                                  (as-> (:networks @state) $
+                                    (map get-network-short-name-url $)
+                                    (apply str $)
+                                    (str $ (:qr-data @state)))
+                                  (:qr-data @state))
+            qr-media-server-uri (image-server/get-qr-image-uri-for-any-url
+                                 {:url         qr-url
                                   :port        (rf/sub [:mediaserver/port])
-                                  :qr-size     700
-                                  :error-level :highest})]
+                                  :qr-size     500
+                                  :error-level :highest})
+            typed-descriptor    (concat descriptor
+                                        (case (:type @state)
+                                          :profile profile-descriptor
+                                          :wallet-legacy wallet-legacy-descriptor
+                                          :wallet-multichain wallet-multichain-descriptor
+                                          nil))]
         [preview/preview-container
          {:state                     state
-          :descriptor                descriptor
-          :full-component-layout?    true
+          :descriptor                typed-descriptor
+          ;:full-component-layout?    true
           :component-container-style {:padding-horizontal 0}}
          [rn/view {:style {:flex               1
                            :justify-content    :center
                            :align-items        :center
-                           :padding-vertical   20
-                           :padding-horizontal 5}}
+                           :padding-horizontal 20
+                           :padding-vertical   40
+                           #_#_:padding-vertical 20
+                           #_#_:padding-horizontal 20}}
+          ;; Hack to reset the `:qr-data` atom value when the `:type` changes
+          [:f> reset-qr-data (:type @state) state]
           [rn/view {:style {:position :absolute
                             :top      0
                             :bottom   0
@@ -53,10 +133,5 @@
                                :resize-mode :repeat}
                       :source (resources/get-mock-image :dark-blur-bg)}]]
           [quo/share-qr-code
-           {:qr-image-uri      qr-media-server-uri
-            :type              (:type @state)
-            :link-title        (:link-title @state)
-            :url-on-press      #(js/alert "url pressed")
-            :url-on-long-press #(js/alert "url long pressed")
-            :share-on-press    #(js/alert "share pressed")
-            :qr-data           (:qr-data @state)}]]]))))
+           (assoc @state :qr-image-uri qr-media-server-uri
+                         :qr-data qr-url)]]]))))
