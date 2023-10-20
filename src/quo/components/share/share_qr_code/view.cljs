@@ -58,6 +58,7 @@
 
 (defn- info-text
   [{:keys [width ellipsize? on-press on-long-press]} qr-data-text]
+  ;; Current implementation of text/text doesn't properly show ellipsized text
   (let [text-component (if ellipsize? rn/text text/text)]
     [rn/pressable {:style         (style/data-text width)
                    :on-press      on-press

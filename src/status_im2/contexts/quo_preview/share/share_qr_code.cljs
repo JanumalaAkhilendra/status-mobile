@@ -120,10 +120,10 @@
           :descriptor                typed-descriptor
           :component-container-style {:padding-horizontal 0}}
          [rn/view {:style {:flex               1
-                           :justify-content    :center
+                           :justify-content    :flex-end
                            :align-items        :center
                            :padding-horizontal 20
-                           :padding-vertical   40}}
+                           :padding-vertical   30}}
           ;; Hack to reset the `:qr-data` atom value when the `:type` changes
           [:f> reset-qr-data (:type @state) state]
           [rn/view {:style {:position :absolute
@@ -132,7 +132,7 @@
                             :left     0
                             :right    0}}
            [rn/image {:style  {:flex        1
-                               :resize-mode :repeat}
+                               :resize-mode :stretch}
                       :source (resources/get-mock-image :dark-blur-bg)}]]
           [quo/share-qr-code
            (assoc @state :qr-image-uri qr-media-server-uri
