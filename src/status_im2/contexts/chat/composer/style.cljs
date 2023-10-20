@@ -7,8 +7,6 @@
     [react-native.reanimated :as reanimated]
     [status-im2.contexts.chat.composer.constants :as constants]))
 
-(def border-top-radius 20)
-
 (defn shadow
   [focused? theme]
   (if platform/ios?
@@ -29,8 +27,8 @@
   (reanimated/apply-animations-to-style
    {:opacity container-opacity}
    (merge
-    {:border-top-left-radius  border-top-radius
-     :border-top-right-radius border-top-radius
+    {:border-top-left-radius  constants/sheet-border-top-radius
+     :border-top-right-radius constants/sheet-border-top-radius
      :padding-horizontal      20
      :background-color        (colors/theme-colors colors/white colors/neutral-95 theme)
      :z-index                 3
@@ -103,8 +101,8 @@
     :left                    0
     :right                   0
     :bottom                  0
-    :border-top-right-radius border-top-radius
-    :border-top-left-radius  border-top-radius
+    :border-top-right-radius constants/sheet-border-top-radius
+    :border-top-left-radius  constants/sheet-border-top-radius
     :overflow                :hidden}))
 
 (defn blur-view

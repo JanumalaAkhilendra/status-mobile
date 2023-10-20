@@ -4,6 +4,7 @@
     [react-native.platform :as platform]))
 
 (def ^:const bar-container-height 20)
+(def ^:const sheet-border-top-radius 20)
 
 (def ^:const input-height 32)
 

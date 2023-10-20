@@ -8,12 +8,14 @@
   [opacity z-index]
   (reanimated/apply-animations-to-style
    {:opacity opacity}
-   {:height   80
-    :position :absolute
-    :z-index  z-index
-    :top      0
-    :left     0
-    :right    0}))
+   {:height                  80
+    :border-top-left-radius  constants/sheet-border-top-radius
+    :border-top-right-radius constants/sheet-border-top-radius
+    :position                :absolute
+    :z-index                 z-index
+    :top                     0
+    :left                    0
+    :right                   0}))
 
 (defn top-gradient
   [opacity z-index]
