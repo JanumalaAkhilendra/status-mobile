@@ -173,7 +173,7 @@
                                        {:content (fn []
                                                    [method-menu/view on-change-profile-pic])
                                         :shell?  true}]))
-              :image-picker-props  {:profile-picture @profile-pic
+              :image-picker-props  {:profile-picture     @profile-pic
                                     :full-name           (if (seq @full-name)
                                                            @full-name
                                                            (i18n/label :t/your-name))

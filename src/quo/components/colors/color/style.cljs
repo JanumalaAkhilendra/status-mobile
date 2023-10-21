@@ -12,7 +12,7 @@
    :margin-right  (-> window-width
                       (- constants/IPHONE_11_PRO_VIEWPORT_WIDTH)
                       (/ 6)
-                      (+ 10.5))
+                      (+ 8))
    :transform     [{:rotate "45deg"}]
    :border-color  :transparent})
 
@@ -27,7 +27,7 @@
              :border-bottom-color (colors/alpha color 0.2)
              :border-start-color  (colors/alpha color 0.2)}
             (when (zero? idx)
-              {:margin-left  -4})))))
+              {:margin-left -4})))))
 
 (defn color-circle
   [color border?]
