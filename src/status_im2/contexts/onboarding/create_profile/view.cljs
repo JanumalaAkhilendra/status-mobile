@@ -171,12 +171,9 @@
                                      (rf/dispatch
                                       [:show-bottom-sheet
                                        {:content (fn []
-                                                   [method-menu/view on-change-profile-pic])}]))
-              :image-picker-props  {:profile-picture     (or
-                                                          @profile-pic
-                                                          (rf/sub
-                                                           [:profile/onboarding-placeholder-avatar
-                                                            @profile-pic]))
+                                                   [method-menu/view on-change-profile-pic])
+                                        :shell?  true}]))
+              :image-picker-props  {:profile-picture @profile-pic
                                     :full-name           (if (seq @full-name)
                                                            @full-name
                                                            (i18n/label :t/your-name))

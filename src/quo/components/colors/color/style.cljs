@@ -40,7 +40,7 @@
    :border-color     color
    :border-width     (if border? 2 0)
    :overflow         :hidden
-   :border-radius    100})
+   :border-radius    20})
 
 (defn feng-shui
   [theme]
