@@ -41,11 +41,7 @@
                :border?   border?)]
        [rn/view
         {:accessibility-label color
-<<<<<<< Updated upstream:src/quo2/components/colors/color/view.cljs
-         :style               (style/color-circle hex-color border? window-width)}
-=======
-         :style (style/color-circle hex-color border? window-width)}
->>>>>>> Stashed changes:src/quo/components/colors/color/view.cljs
+         :style               (style/color-circle hex-color border?)}
         (when selected?
           [icon/icon :i/check
            {:size  20
