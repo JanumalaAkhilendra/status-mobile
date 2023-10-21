@@ -11,8 +11,13 @@
                         (/ window-width 7.8125)
                         48)
    :border-width      4
+<<<<<<< HEAD
    :margin-horizontal (/ window-width 93.75)
    :border-radius     24
+=======
+   :border-radius     24
+   :margin-horizontal (/ window-width 93.75)
+>>>>>>> 410d5490d (Make color selector take full device width to match Figma)
    :transform         [{:rotate "45deg"}]
    :border-color      :transparent})
 
